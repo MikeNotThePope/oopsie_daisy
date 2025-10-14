@@ -1,10 +1,10 @@
-defmodule DaisyuiGen.Generator.ComponentBuilder do
+defmodule OopsieDaisy.Generator.ComponentBuilder do
   @moduledoc """
   Builds Phoenix.Component code from ComponentSpec.
   """
 
-  alias DaisyuiGen.Generator.Analyzer.ComponentSpec
-  alias DaisyuiGen.Generator.{Analyzer, Helpers}
+  alias OopsieDaisy.Generator.Analyzer.ComponentSpec
+  alias OopsieDaisy.Generator.{Analyzer, Helpers}
 
   @doc """
   Generates component attributes based on variants.

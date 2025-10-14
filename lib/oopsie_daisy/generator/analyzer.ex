@@ -1,10 +1,10 @@
-defmodule DaisyuiGen.Generator.Analyzer do
+defmodule OopsieDaisy.Generator.Analyzer do
   @moduledoc """
   Analyzes PathGroup data to extract component metadata for code generation.
   """
 
-  alias DaisyuiGen.Parser.{PathGroup, TitleGroup}
-  alias DaisyuiGen.Generator.Helpers
+  alias OopsieDaisy.Parser.{PathGroup, TitleGroup}
+  alias OopsieDaisy.Generator.Helpers
 
   defmodule ComponentSpec do
     @moduledoc """
@@ -43,7 +43,7 @@ defmodule DaisyuiGen.Generator.Analyzer do
   """
   def analyze_path_group(%PathGroup{path: path, title_groups: title_groups}, opts \\ []) do
     name = Helpers.extract_component_name(path)
-    base_module = Keyword.get(opts, :base_module, "DaisyuiGen.Components")
+    base_module = Keyword.get(opts, :base_module, "OopsieDaisy.Components")
     all_elements = collect_all_elements(title_groups)
     all_classes = Helpers.extract_all_classes(all_elements)
     base_class = Helpers.detect_base_class(all_classes)

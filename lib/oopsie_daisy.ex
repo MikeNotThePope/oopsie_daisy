@@ -1,8 +1,8 @@
-defmodule DaisyuiGen do
+defmodule OopsieDaisy do
   @moduledoc """
   Automatically generates Phoenix.Component modules from DaisyUI documentation.
 
-  DaisyuiGen parses DaisyUI's markdown documentation, extracts HTML examples,
+  OopsieDaisy parses DaisyUI's markdown documentation, extracts HTML examples,
   analyzes CSS classes to detect variants, and generates type-safe Phoenix LiveView
   components with proper attributes and helper functions.
 
@@ -19,31 +19,31 @@ defmodule DaisyuiGen do
   The primary interface is through Mix tasks:
 
       # Generate all components
-      mix daisyui.gen
+      mix oopsie_daisy.gen
 
       # Generate specific components
-      mix daisyui.gen --components button,badge
+      mix oopsie_daisy.gen --components button,badge
 
       # Custom output directory
-      mix daisyui.gen --output-dir lib/my_components
+      mix oopsie_daisy.gen --output-dir lib/my_components
 
   ## Programmatic API
 
-  You can also use DaisyuiGen programmatically:
+  You can also use OopsieDaisy programmatically:
 
       # Ensure DaisyUI repository is available
-      {:ok, path} = DaisyuiGen.Cloner.ensure_available()
+      {:ok, path} = OopsieDaisy.Cloner.ensure_available()
 
       # Parse documentation
-      path_groups = DaisyuiGen.Parser.parse_file_lines(lines, file_path)
+      path_groups = OopsieDaisy.Parser.parse_file_lines(lines, file_path)
 
       # Analyze and generate
-      spec = DaisyuiGen.Generator.Analyzer.analyze_path_group(path_group)
-      code = DaisyuiGen.Generator.Template.render_module(spec)
+      spec = OopsieDaisy.Generator.Analyzer.analyze_path_group(path_group)
+      code = OopsieDaisy.Generator.Template.render_module(spec)
   """
 
-  alias DaisyuiGen.{Cloner, Parser}
-  alias DaisyuiGen.Generator.{Analyzer, Template}
+  alias OopsieDaisy.{Cloner, Parser}
+  alias OopsieDaisy.Generator.{Analyzer, Template}
 
   @doc """
   Generates Phoenix.Component code from DaisyUI documentation.
@@ -51,20 +51,20 @@ defmodule DaisyuiGen do
   ## Options
 
     * `:components` - List of component names to generate (default: all)
-    * `:output_dir` - Output directory path (default: "lib/daisyui_gen_components")
-    * `:base_module` - Base module namespace (default: "DaisyuiGen.Components")
+    * `:output_dir` - Output directory path (default: "lib/oopsie_daisy_components")
+    * `:base_module` - Base module namespace (default: "OopsieDaisy.Components")
     * `:base_dir` - Base directory for DaisyUI clone (default: current directory)
 
   ## Examples
 
       # Generate all components
-      DaisyuiGen.generate()
+      OopsieDaisy.generate()
 
       # Generate specific components
-      DaisyuiGen.generate(components: ["button", "badge"])
+      OopsieDaisy.generate(components: ["button", "badge"])
 
       # Custom module namespace
-      DaisyuiGen.generate(base_module: "MyApp.Components")
+      OopsieDaisy.generate(base_module: "MyApp.Components")
 
   ## Returns
 
@@ -159,8 +159,8 @@ defmodule DaisyuiGen do
   end
 
   defp generate_components(path_groups, opts) do
-    output_dir = Keyword.get(opts, :output_dir, "lib/daisyui_gen_components")
-    base_module = Keyword.get(opts, :base_module, "DaisyuiGen.Components")
+    output_dir = Keyword.get(opts, :output_dir, "lib/oopsie_daisy_components")
+    base_module = Keyword.get(opts, :base_module, "OopsieDaisy.Components")
     File.mkdir_p!(output_dir)
 
     results =

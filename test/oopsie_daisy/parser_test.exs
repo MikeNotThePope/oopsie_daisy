@@ -1,7 +1,7 @@
-defmodule DaisyuiGen.ParserTest do
+defmodule OopsieDaisy.ParserTest do
   use ExUnit.Case, async: true
-  alias DaisyuiGen.Parser
-  alias DaisyuiGen.Parser.Element
+  alias OopsieDaisy.Parser
+  alias OopsieDaisy.Parser.Element
 
   describe "parse_file_lines/2" do
     test "parses simple HTML example with title" do

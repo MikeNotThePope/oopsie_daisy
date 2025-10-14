@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.Daisyui.Gen do
+defmodule Mix.Tasks.OopsieDaisy.Gen do
   @moduledoc """
   Generates Phoenix.Component modules from DaisyUI documentation.
 
@@ -7,16 +7,16 @@ defmodule Mix.Tasks.Daisyui.Gen do
 
   ## Usage
 
-      $ mix daisyui.gen
-      $ mix daisyui.gen --components button,badge
-      $ mix daisyui.gen --dry-run
-      $ mix daisyui.gen --output-dir lib/my_components
+      $ mix oopsie_daisy.gen
+      $ mix oopsie_daisy.gen --components button,badge
+      $ mix oopsie_daisy.gen --dry-run
+      $ mix oopsie_daisy.gen --output-dir lib/my_components
 
   ## Options
 
     * `--components` - Only generate specific components (comma-separated)
-    * `--output-dir` - Output directory (default: lib/daisyui_gen_components)
-    * `--base-module` - Base module namespace (default: DaisyuiGen.Components)
+    * `--output-dir` - Output directory (default: lib/oopsie_daisy_components)
+    * `--base-module` - Base module namespace (default: OopsieDaisy.Components)
     * `--dry-run` - Print what would be generated without writing files
     * `--skip-examples` - Skip generating example functions
     * `--skip-clone` - Skip cloning DaisyUI (assumes repository already exists)
@@ -24,25 +24,25 @@ defmodule Mix.Tasks.Daisyui.Gen do
   ## Examples
 
       # Generate all components (clones DaisyUI if needed)
-      $ mix daisyui.gen
+      $ mix oopsie_daisy.gen
 
       # Generate only button and badge components
-      $ mix daisyui.gen --components button,badge
+      $ mix oopsie_daisy.gen --components button,badge
 
       # Preview without writing files
-      $ mix daisyui.gen --dry-run
+      $ mix oopsie_daisy.gen --dry-run
 
       # Generate to custom directory with custom module namespace
-      $ mix daisyui.gen --output-dir lib/ui/components --base-module MyApp.Components
+      $ mix oopsie_daisy.gen --output-dir lib/ui/components --base-module MyApp.Components
 
       # Skip cloning step (use existing repository)
-      $ mix daisyui.gen --skip-clone
+      $ mix oopsie_daisy.gen --skip-clone
   """
 
   use Mix.Task
 
-  alias DaisyuiGen.{Cloner, Parser}
-  alias DaisyuiGen.Generator.{Analyzer, Template}
+  alias OopsieDaisy.{Cloner, Parser}
+  alias OopsieDaisy.Generator.{Analyzer, Template}
 
   @shortdoc "Generates Phoenix components from DaisyUI documentation"
 
@@ -82,8 +82,8 @@ defmodule Mix.Tasks.Daisyui.Gen do
         ]
       )
 
-    output_dir = opts[:output_dir] || "lib/daisyui_gen_components"
-    base_module = opts[:base_module] || "DaisyuiGen.Components"
+    output_dir = opts[:output_dir] || "lib/oopsie_daisy_components"
+    base_module = opts[:base_module] || "OopsieDaisy.Components"
     dry_run = opts[:dry_run] || false
     skip_clone = opts[:skip_clone] || false
     component_filter = parse_component_filter(opts[:components])

@@ -1,8 +1,8 @@
-# DaisyuiGen
+# OopsieDaisy
 
 **Automatically generate Phoenix.Component modules from DaisyUI documentation.**
 
-DaisyuiGen parses DaisyUI's markdown documentation, extracts HTML examples, analyzes CSS classes to detect variants, and generates type-safe Phoenix LiveView components with proper attributes and helper functions.
+OopsieDaisy parses DaisyUI's markdown documentation, extracts HTML examples, analyzes CSS classes to detect variants, and generates type-safe Phoenix LiveView components with proper attributes and helper functions.
 
 ## Features
 
@@ -16,12 +16,12 @@ DaisyuiGen parses DaisyUI's markdown documentation, extracts HTML examples, anal
 
 ## Installation
 
-Add `daisyui_gen` to your list of dependencies in `mix.exs`:
+Add `oopsie_daisy` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:daisyui_gen, "~> 0.1.0"},
+    {:oopsie_daisy, "~> 0.1.0"},
     {:floki, "~> 0.36.0"}  # Required for HTML parsing
   ]
 end
@@ -39,32 +39,32 @@ mix deps.get
 
 ```bash
 # Generate all components
-mix daisyui.gen
+mix oopsie_daisy.gen
 
 # Generate specific components
-mix daisyui.gen --components button,badge
+mix oopsie_daisy.gen --components button,badge
 
 # Custom output directory
-mix daisyui.gen --output-dir lib/my_app_web/components
+mix oopsie_daisy.gen --output-dir lib/my_app_web/components
 
 # Custom module namespace
-mix daisyui.gen --base-module MyApp.Components
+mix oopsie_daisy.gen --base-module MyApp.Components
 
 # Preview without writing files
-mix daisyui.gen --dry-run
+mix oopsie_daisy.gen --dry-run
 
 # Skip cloning DaisyUI (if already cloned)
-mix daisyui.gen --skip-clone
+mix oopsie_daisy.gen --skip-clone
 ```
 
 ### Programmatic API
 
 ```elixir
 # Generate all components
-{:ok, results} = DaisyuiGen.generate()
+{:ok, results} = OopsieDaisy.generate()
 
 # Generate specific components with custom options
-{:ok, results} = DaisyuiGen.generate(
+{:ok, results} = OopsieDaisy.generate(
   components: ["button", "badge"],
   output_dir: "lib/my_app_web/components",
   base_module: "MyApp.Components"

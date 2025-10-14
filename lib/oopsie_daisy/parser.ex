@@ -1,4 +1,4 @@
-defmodule DaisyuiGen.Parser do
+defmodule OopsieDaisy.Parser do
   @moduledoc """
   Parses HTML examples from DaisyUI component documentation markdown files.
 
@@ -14,7 +14,7 @@ defmodule DaisyuiGen.Parser do
 
     @type t :: %__MODULE__{
             path: String.t(),
-            title_groups: [DaisyuiGen.Parser.TitleGroup.t()]
+            title_groups: [OopsieDaisy.Parser.TitleGroup.t()]
           }
   end
 
@@ -26,7 +26,7 @@ defmodule DaisyuiGen.Parser do
 
     @type t :: %__MODULE__{
             title: String.t(),
-            elements: [DaisyuiGen.Parser.Element.t() | String.t()]
+            elements: [OopsieDaisy.Parser.Element.t() | String.t()]
           }
   end
 

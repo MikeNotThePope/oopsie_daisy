@@ -1,7 +1,7 @@
-defmodule DaisyuiGen.Generator.HelpersTest do
+defmodule OopsieDaisy.Generator.HelpersTest do
   use ExUnit.Case, async: true
 
-  alias DaisyuiGen.Generator.Helpers
+  alias OopsieDaisy.Generator.Helpers
 
   describe "extract_component_name/1" do
     test "extracts and camelizes component name from path" do

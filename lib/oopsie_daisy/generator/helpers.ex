@@ -1,9 +1,9 @@
-defmodule DaisyuiGen.Generator.Helpers do
+defmodule OopsieDaisy.Generator.Helpers do
   @moduledoc """
   Utility functions for the DaisyUI generator.
   """
 
-  alias DaisyuiGen.Parser.Element
+  alias OopsieDaisy.Parser.Element
 
   @doc """
   Extracts component name from file path.
@@ -30,12 +30,12 @@ defmodule DaisyuiGen.Generator.Helpers do
   ## Examples
 
       iex> to_module_name("Button")
-      "DaisyuiGen.Components.Button"
+      "OopsieDaisy.Components.Button"
 
       iex> to_module_name("Button", "MyApp.Components")
       "MyApp.Components.Button"
   """
-  def to_module_name(component_name, base_module \\ "DaisyuiGen.Components") do
+  def to_module_name(component_name, base_module \\ "OopsieDaisy.Components") do
     "#{base_module}.#{component_name}"
   end
 

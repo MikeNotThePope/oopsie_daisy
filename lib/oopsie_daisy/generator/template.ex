@@ -1,10 +1,10 @@
-defmodule DaisyuiGen.Generator.Template do
+defmodule OopsieDaisy.Generator.Template do
   @moduledoc """
   Templates for generating complete Phoenix.Component modules.
   """
 
-  alias DaisyuiGen.Generator.ComponentBuilder
-  alias DaisyuiGen.Generator.Analyzer.ComponentSpec
+  alias OopsieDaisy.Generator.ComponentBuilder
+  alias OopsieDaisy.Generator.Analyzer.ComponentSpec
 
   @doc """
   Generates complete module code from ComponentSpec.

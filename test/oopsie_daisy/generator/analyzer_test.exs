@@ -1,9 +1,9 @@
-defmodule DaisyuiGen.Generator.AnalyzerTest do
+defmodule OopsieDaisy.Generator.AnalyzerTest do
   use ExUnit.Case, async: true
 
-  alias DaisyuiGen.Generator.Analyzer
-  alias DaisyuiGen.Generator.Analyzer.ComponentSpec
-  alias DaisyuiGen.Parser.{PathGroup, TitleGroup, Element}
+  alias OopsieDaisy.Generator.Analyzer
+  alias OopsieDaisy.Generator.Analyzer.ComponentSpec
+  alias OopsieDaisy.Parser.{PathGroup, TitleGroup, Element}
 
   describe "analyze_path_group/2" do
     test "analyzes path group and creates component spec" do
@@ -27,7 +27,7 @@ defmodule DaisyuiGen.Generator.AnalyzerTest do
 
       assert %ComponentSpec{} = spec
       assert spec.name == "Button"
-      assert spec.module_name == "DaisyuiGen.Components.Button"
+      assert spec.module_name == "OopsieDaisy.Components.Button"
       assert spec.file_name == "button"
       assert spec.base_class == "btn"
     end

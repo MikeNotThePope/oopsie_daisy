@@ -1,10 +1,10 @@
-defmodule DaisyuiGen.Generator.ExampleBuilder do
+defmodule OopsieDaisy.Generator.ExampleBuilder do
   @moduledoc """
   Converts TitleGroups and Elements to example functions with HEEx templates.
   """
 
-  alias DaisyuiGen.Parser.{Element, TitleGroup}
-  alias DaisyuiGen.Generator.Helpers
+  alias OopsieDaisy.Parser.{Element, TitleGroup}
+  alias OopsieDaisy.Generator.Helpers
 
   @doc """
   Builds an example function from a TitleGroup.

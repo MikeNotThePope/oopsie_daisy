@@ -1,12 +1,12 @@
-defmodule DaisyuiGen.MixProject do
+defmodule OopsieDaisy.MixProject do
   use Mix.Project
 
   @version "0.1.0"
-  @source_url "https://github.com/MikeNotThePope/daisyui_gen"
+  @source_url "https://github.com/MikeNotThePope/oopsie_daisy"
 
   def project do
     [
-      app: :daisyui_gen,
+      app: :oopsie_daisy,
       version: @version,
       elixir: "~> 1.18",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -15,14 +15,14 @@ defmodule DaisyuiGen.MixProject do
       description: description(),
       package: package(),
       docs: docs(),
-      name: "DaisyuiGen",
+      name: "OopsieDaisy",
       source_url: @source_url
     ]
   end
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(_), do: ["lib/daisyui_gen", "lib/mix"]
+  defp elixirc_paths(_), do: ["lib/oopsie_daisy", "lib/mix"]
 
   # Run "mix help compile.app" to learn about applications.
   def application do

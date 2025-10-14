@@ -1,4 +1,4 @@
-defmodule DaisyuiGen.Cloner do
+defmodule OopsieDaisy.Cloner do
   @moduledoc """
   Clones the DaisyUI repository into the tmp directory.
 
@@ -8,10 +8,10 @@ defmodule DaisyuiGen.Cloner do
 
   ## Usage
 
-      iex> DaisyuiGen.Cloner.clone()
+      iex> OopsieDaisy.Cloner.clone()
       {:ok, "/path/to/project/tmp/daisyui"}
 
-      iex> DaisyuiGen.Cloner.clone(output_callback: &IO.puts/1)
+      iex> OopsieDaisy.Cloner.clone(output_callback: &IO.puts/1)
       {:ok, "/path/to/project/tmp/daisyui"}
 
   ## Options
@@ -38,10 +38,10 @@ defmodule DaisyuiGen.Cloner do
 
   ## Examples
 
-      iex> DaisyuiGen.Cloner.clone()
+      iex> OopsieDaisy.Cloner.clone()
       {:ok, "/path/to/tmp/daisyui"}
 
-      iex> DaisyuiGen.Cloner.clone(base_dir: "/custom/path")
+      iex> OopsieDaisy.Cloner.clone(base_dir: "/custom/path")
       {:ok, "/custom/path/tmp/daisyui"}
   """
   @spec clone([clone_option()]) :: clone_result()
@@ -78,7 +78,7 @@ defmodule DaisyuiGen.Cloner do
 
   ## Examples
 
-      iex> DaisyuiGen.Cloner.ensure_available()
+      iex> OopsieDaisy.Cloner.ensure_available()
       {:ok, "/path/to/tmp/daisyui"}
   """
   @spec ensure_available([clone_option()]) :: clone_result()

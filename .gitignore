@@ -17,11 +17,11 @@ erl_crash.dump
 *.ez
 
 # Ignore package tarball (built via "mix hex.build").
-daisyui_gen-*.tar
+oopsie_daisy-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
 
 # Generated components (should not be committed to generator package)
-/lib/daisyui_gen_components/
+/lib/oopsie_daisy_components/
 /lib/*_components/

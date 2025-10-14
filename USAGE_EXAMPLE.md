@@ -68,10 +68,10 @@ All generated components support:
 
 1. Generate the components you need:
    ```bash
-   mix daisyui.gen --components button,badge,card
+   mix oopsie_daisy.gen --components button,badge,card
    ```
 
-2. Copy the generated files from `lib/daisyui_gen_components/` to your Phoenix project's component directory
+2. Copy the generated files from `lib/oopsie_daisy_components/` to your Phoenix project's component directory
 
 3. Use them in your templates and LiveView components
 

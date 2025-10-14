@@ -1,8 +1,8 @@
-defmodule DaisyuiGen.Generator.ExampleBuilderTest do
+defmodule OopsieDaisy.Generator.ExampleBuilderTest do
   use ExUnit.Case, async: true
 
-  alias DaisyuiGen.Generator.ExampleBuilder
-  alias DaisyuiGen.Parser.{Element, TitleGroup}
+  alias OopsieDaisy.Generator.ExampleBuilder
+  alias OopsieDaisy.Parser.{Element, TitleGroup}
 
   describe "should_split_elements?/1" do
     test "returns true for multiple elements with same tag" do
