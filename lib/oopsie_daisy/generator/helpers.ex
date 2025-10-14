@@ -1,6 +1,8 @@
 defmodule OopsieDaisy.Generator.Helpers do
   @moduledoc """
-  Utility functions for the DaisyUI generator.
+  Internal utility functions for component generation.
+
+  String manipulation, class analysis, HEEx formatting, etc.
   """
 
   alias OopsieDaisy.Parser.Element

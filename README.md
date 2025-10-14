@@ -1,59 +1,149 @@
 # OopsieDaisy
 
-**Automatically generate Phoenix.Component modules from DaisyUI documentation.**
+Generate type-safe Phoenix components from DaisyUI documentation.
 
-OopsieDaisy parses DaisyUI's markdown documentation, extracts HTML examples, analyzes CSS classes to detect variants, and generates type-safe Phoenix LiveView components with proper attributes and helper functions.
+## What is this?
 
-## Features
+OopsieDaisy automatically creates `Phoenix.Component` modules for DaisyUI components. Point it at DaisyUI's docs, and it generates clean, production-ready Phoenix components with proper attributes, variants, and type safety.
 
-- **🤖 Automatic Variant Detection**: Detects size, color, style, and modifier variants from CSS classes
-- **✨ Type-Safe Attributes**: Generates proper `attr` declarations with defaults and allowed values
-- **🎨 Smart Class Composition**: Builds helper functions for intelligent class merging
-- **📚 Example Preservation**: All DaisyUI examples become example functions in the generated module
-- **🔧 HEEx Templates**: Properly formatted HEEx with nested elements and attributes
-- **🎯 SVG Support**: Preserves complex SVG icons correctly
-- **⚙️ Configurable**: Custom output directories and module namespaces
+Instead of manually writing components and keeping them in sync with DaisyUI updates, generate them automatically.
 
-## Installation
+## Quick Start
 
-Add `oopsie_daisy` to your list of dependencies in `mix.exs`:
+Add to your Phoenix project:
 
 ```elixir
+# mix.exs
 def deps do
   [
-    {:oopsie_daisy, "~> 0.1.0"},
-    {:floki, "~> 0.36.0"}  # Required for HTML parsing
+    {:oopsie_daisy, "~> 0.1.0", only: :dev, runtime: false}
   ]
 end
 ```
 
-Then run:
+Generate components:
 
 ```bash
-mix deps.get
-```
-
-## Usage
-
-### Mix Task (Recommended)
-
-The generator **automatically detects your app name** and uses the appropriate module namespace:
-
-```bash
-# Generate all components (auto-detects module name from your Phoenix app)
+# From your Phoenix project root
 mix oopsie_daisy.gen
 
-# In a Phoenix app called "my_app", this generates:
-# MyAppWeb.Components.Button, MyAppWeb.Components.Badge, etc.
+# Or generate specific components
+mix oopsie_daisy.gen --components button,badge,card
+```
 
-# Generate specific components
-mix oopsie_daisy.gen --components button,badge
+Components are generated in `lib/oopsie_daisy_components/` with your app's namespace (e.g., `MyAppWeb.Components.Button`).
 
+Use in your templates:
+
+```heex
+<.button variant={:primary} size={:lg}>
+  Click me
+</.button>
+
+<.badge variant={:success}>
+  New
+</.badge>
+```
+
+## How It Works
+
+1. **Clones DaisyUI repo** (automatically, once)
+2. **Parses markdown documentation** to extract HTML examples
+3. **Analyzes CSS classes** to detect variants (colors, sizes, styles)
+4. **Generates Phoenix.Component modules** with proper `attr` declarations
+5. **Creates helper functions** for class composition
+
+## Generated Components
+
+Every generated component includes:
+
+- Type-safe attributes with allowed values
+- Smart defaults based on DaisyUI
+- Helper functions for class composition
+- Support for custom classes via `class` attribute
+- Pass-through for HTML attributes via `@rest`
+
+Example generated component:
+
+```elixir
+defmodule MyAppWeb.Components.Button do
+  use Phoenix.Component
+
+  attr :variant, :atom, default: nil,
+    values: [nil, :primary, :secondary, :accent, :neutral, :info, :success, :warning, :error]
+  attr :size, :atom, default: :md,
+    values: [:xs, :sm, :md, :lg, :xl]
+  attr :style, :atom, default: nil,
+    values: [nil, :outline, :ghost, :link]
+  attr :class, :string, default: ""
+  attr :rest, :global, include: ~w(disabled type)
+  slot :inner_block, required: true
+
+  def button(assigns) do
+    ~H"""
+    <button class={["btn", variant_class(@variant), size_class(@size), style_class(@style), @class]} {@rest}>
+      <%= render_slot(@inner_block) %>
+    </button>
+    """
+  end
+
+  defp variant_class(nil), do: nil
+  defp variant_class(:primary), do: "btn-primary"
+  # ... etc
+end
+```
+
+## Usage Examples
+
+### Basic components
+
+```heex
+<.button>Default</.button>
+<.button variant={:primary}>Primary</.button>
+<.button variant={:error} size={:lg}>Large Error</.button>
+```
+
+### With custom classes
+
+```heex
+<.button variant={:primary} class="mt-4 shadow-xl">
+  Custom styled
+</.button>
+```
+
+### With HTML attributes
+
+```heex
+<.button variant={:primary} type="submit" disabled={@is_submitting}>
+  Submit
+</.button>
+```
+
+### Dynamic variants
+
+```heex
+<.badge variant={@status}>
+  <%= @status_text %>
+</.badge>
+```
+
+## Configuration
+
+### Auto-detection
+
+By default, the generator detects your app name and uses the appropriate namespace:
+
+- Phoenix app `my_app` → `MyAppWeb.Components.*`
+- Other Elixir apps → `MyApp.Components.*`
+
+### Override defaults
+
+```bash
 # Custom output directory
-mix oopsie_daisy.gen --output-dir lib/my_app_web/components
+mix oopsie_daisy.gen --output-dir lib/my_app_web/custom_components
 
-# Override auto-detected module namespace
-mix oopsie_daisy.gen --base-module MyApp.Components
+# Custom module namespace
+mix oopsie_daisy.gen --base-module MyApp.UI.Components
 
 # Preview without writing files
 mix oopsie_daisy.gen --dry-run
@@ -62,71 +152,98 @@ mix oopsie_daisy.gen --dry-run
 mix oopsie_daisy.gen --skip-clone
 ```
 
-### Programmatic API
+## Requirements
+
+**Your Phoenix app needs:**
+
+- Phoenix 1.7+ (for `Phoenix.Component`)
+- Tailwind CSS configured
+- DaisyUI plugin installed and configured
+
+**To run the generator:**
+
+- Elixir ~> 1.18
+- Git (for cloning DaisyUI repo)
+
+The generator itself requires Floki for HTML parsing, but it's only needed at dev time.
+
+## DaisyUI Setup
+
+If you haven't set up DaisyUI yet:
+
+```bash
+# Install DaisyUI
+cd assets
+npm install -D daisyui@latest
+```
+
+```javascript
+// assets/tailwind.config.js
+module.exports = {
+  plugins: [
+    require("daisyui")
+  ],
+  daisyui: {
+    themes: ["light", "dark"], // or your custom themes
+  },
+}
+```
+
+## When to Use This
+
+**Good fit:**
+- You're building a Phoenix app with DaisyUI
+- You want type-safe component APIs
+- You want to keep components in sync with DaisyUI updates
+- You prefer Phoenix.Component patterns over raw HTML/CSS classes
+
+**Not needed if:**
+- You're happy writing DaisyUI classes directly in HEEx
+- You only use a handful of components
+- You have highly customized component APIs
+
+## Programmatic API
+
+Generate components from Elixir code:
 
 ```elixir
-# Generate all components (auto-detects module name)
+# Generate all components
 {:ok, results} = OopsieDaisy.generate()
 
-# Generate specific components with custom options
+# Generate specific components
 {:ok, results} = OopsieDaisy.generate(
   components: ["button", "badge"],
   output_dir: "lib/my_app_web/components"
 )
 
-# Override auto-detected module name
+# Override module namespace
 {:ok, results} = OopsieDaisy.generate(
   base_module: "MyApp.Components"
 )
 ```
 
-## Generated Component Example
+## Updating Components
 
-```elixir
-defmodule MyApp.Components.Button do
-  use Phoenix.Component
+When DaisyUI updates:
 
-  # Smart attributes based on detected variants
-  @doc "Color variant"
-  attr :variant, :atom, default: nil, values: [nil, :primary, :secondary, ...]
+```bash
+# Remove cloned repo
+rm -rf tmp/daisyui
 
-  @doc "Button size"
-  attr :size, :atom, default: :md, values: [:xs, :sm, :md, :lg, :xl]
-
-  @doc "Additional CSS classes"
-  attr :class, :string, default: ""
-  attr :rest, :global
-
-  slot :inner_block, required: true
-
-  def button(assigns) do
-    ~H"""
-    <button class={["btn", variant_class(@variant), size_class(@size), @class]} {@rest}>
-      <%= render_slot(@inner_block) %>
-    </button>
-    """
-  end
-
-  # Helper functions for class composition
-  defp variant_class(nil), do: nil
-  defp variant_class(:primary), do: "btn-primary"
-  # ...
-end
+# Re-generate components
+mix oopsie_daisy.gen
 ```
 
-## Requirements
-
-- Elixir ~> 1.18
-- Floki ~> 0.36 (for HTML parsing)
-- Git (for cloning DaisyUI repository)
-
-## Credits
-
-- Built with [Claude Code](https://claude.com/claude-code) 🤖
-- Extracted from [Boxy](https://github.com/MikeNotThePope/boxy)
-- Generates components for [DaisyUI](https://daisyui.com/)
+The generator will clone the latest DaisyUI and regenerate all components.
 
 ## License
 
 [CC0 1.0 Universal](https://creativecommons.org/public-domain/cc0/) - Public Domain
 
+Use this however you want.
+
+## Credits
+
+- Built with [Claude Code](https://claude.com/claude-code)
+- Extracted from [Boxy](https://github.com/MikeNotThePope/boxy)
+- Generates components for [DaisyUI](https://daisyui.com/)

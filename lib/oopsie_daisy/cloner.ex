@@ -1,48 +1,20 @@
 defmodule OopsieDaisy.Cloner do
   @moduledoc """
-  Clones the DaisyUI repository into the tmp directory.
+  Clones the DaisyUI repository for parsing.
 
-  This module provides functionality to clone a shallow copy (depth 1) of the DaisyUI
-  repository from GitHub into `tmp/daisyui`. If the directory already exists, it will
-  be deleted first to ensure a clean clone.
+  Internal module used by the generator. Phoenix developers don't typically
+  interact with this directly - use `mix oopsie_daisy.gen` instead.
 
-  ## Usage
-
-      iex> OopsieDaisy.Cloner.clone()
-      {:ok, "/path/to/project/tmp/daisyui"}
-
-      iex> OopsieDaisy.Cloner.clone(output_callback: &IO.puts/1)
-      {:ok, "/path/to/project/tmp/daisyui"}
-
-  ## Options
-
-    * `:output_callback` - A function that receives output messages (default: &IO.puts/1)
-    * `:base_dir` - The base directory to clone into (default: current working directory)
-
-  ## Return Values
-
-    * `{:ok, path}` - Clone succeeded, returns the path to the cloned repository
-    * `{:error, reason}` - Clone failed with the given reason
+  Clones DaisyUI from GitHub into `tmp/daisyui` at depth 1 (shallow clone).
   """
 
   @type clone_option :: {:output_callback, (String.t() -> any())} | {:base_dir, String.t()}
   @type clone_result :: {:ok, String.t()} | {:error, String.t()}
 
   @doc """
-  Clones the DaisyUI repository into tmp/daisyui.
+  Clones DaisyUI repository to `tmp/daisyui`.
 
-  ## Options
-
-    * `:output_callback` - A function that receives output messages
-    * `:base_dir` - The base directory (defaults to current working directory)
-
-  ## Examples
-
-      iex> OopsieDaisy.Cloner.clone()
-      {:ok, "/path/to/tmp/daisyui"}
-
-      iex> OopsieDaisy.Cloner.clone(base_dir: "/custom/path")
-      {:ok, "/custom/path/tmp/daisyui"}
+  Returns `{:ok, path}` on success, `{:error, reason}` on failure.
   """
   @spec clone([clone_option()]) :: clone_result()
   def clone(opts \\ []) do
@@ -67,19 +39,9 @@ defmodule OopsieDaisy.Cloner do
   end
 
   @doc """
-  Ensures the DaisyUI repository is available, cloning it if necessary.
+  Ensures DaisyUI repository is available, cloning if needed.
 
-  This function checks if the DaisyUI repository exists at tmp/daisyui.
-  If it doesn't exist, it clones it. If it does exist, it does nothing.
-
-  ## Options
-
-  Same as `clone/1`.
-
-  ## Examples
-
-      iex> OopsieDaisy.Cloner.ensure_available()
-      {:ok, "/path/to/tmp/daisyui"}
+  Checks if `tmp/daisyui` exists. If not, clones it. If yes, does nothing.
   """
   @spec ensure_available([clone_option()]) :: clone_result()
   def ensure_available(opts \\ []) do

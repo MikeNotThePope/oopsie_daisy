@@ -1,83 +1,77 @@
 defmodule OopsieDaisy do
   @moduledoc """
-  Automatically generates Phoenix.Component modules from DaisyUI documentation.
+  Generates Phoenix.Component modules from DaisyUI documentation.
 
-  OopsieDaisy parses DaisyUI's markdown documentation, extracts HTML examples,
-  analyzes CSS classes to detect variants, and generates type-safe Phoenix LiveView
-  components with proper attributes and helper functions.
+  ## Quick Start
 
-  ## Features
-
-  - **Automatic Variant Detection**: Detects size, color, style, and modifier variants
-  - **Type-Safe Attributes**: Generates proper `attr` declarations with defaults
-  - **Smart Class Composition**: Builds helper functions for class merging
-  - **Example Preservation**: All DaisyUI examples become example functions
-  - **HEEx Templates**: Properly formatted HEEx with nested elements
-
-  ## Usage
-
-  The primary interface is through Mix tasks:
-
-      # Generate all components
-      mix oopsie_daisy.gen
+      # Generate all components (auto-detects your app name)
+      {:ok, results} = OopsieDaisy.generate()
 
       # Generate specific components
-      mix oopsie_daisy.gen --components button,badge
+      {:ok, results} = OopsieDaisy.generate(components: ["button", "badge"])
 
-      # Custom output directory
-      mix oopsie_daisy.gen --output-dir lib/my_components
+  Most Phoenix developers will use the mix task instead: `mix oopsie_daisy.gen`
 
-  ## Programmatic API
+  ## What It Does
 
-  You can also use OopsieDaisy programmatically:
+  OopsieDaisy:
+  1. Clones the DaisyUI repository
+  2. Parses component documentation (markdown files)
+  3. Extracts HTML examples
+  4. Analyzes CSS classes to detect variants (colors, sizes, styles)
+  5. Generates type-safe Phoenix.Component modules
 
-      # Ensure DaisyUI repository is available
-      {:ok, path} = OopsieDaisy.Cloner.ensure_available()
+  ## Generated Components
 
-      # Parse documentation
-      path_groups = OopsieDaisy.Parser.parse_file_lines(lines, file_path)
+  Every component includes:
+  - Type-safe `attr` declarations with allowed values
+  - Helper functions for class composition
+  - Support for custom classes and HTML attributes
+  - Proper Phoenix.Component patterns
 
-      # Analyze and generate
-      spec = OopsieDaisy.Generator.Analyzer.analyze_path_group(path_group)
-      code = OopsieDaisy.Generator.Template.render_module(spec)
+  ## Options
+
+  See `generate/1` for all available options.
   """
 
   alias OopsieDaisy.{Cloner, Parser}
   alias OopsieDaisy.Generator.{Analyzer, Template}
 
   @doc """
-  Generates Phoenix.Component code from DaisyUI documentation.
+  Generates Phoenix.Component modules from DaisyUI documentation.
 
   ## Options
 
-    * `:components` - List of component names to generate (default: all)
-    * `:output_dir` - Output directory path (default: "lib/oopsie_daisy_components")
-    * `:base_module` - Base module namespace (default: auto-detected from app name)
-    * `:base_dir` - Base directory for DaisyUI clone (default: current directory)
+    * `:components` - List of component names (default: all). Example: `["button", "badge"]`
+    * `:output_dir` - Where to write files (default: `"lib/oopsie_daisy_components"`)
+    * `:base_module` - Module namespace (default: auto-detected from your app name)
+    * `:base_dir` - Where DaisyUI is cloned (default: current directory)
 
   ## Auto-Detection
 
-  If `:base_module` is not provided, it will be auto-detected from your Mix project:
+  If you don't provide `:base_module`, it's detected from your Phoenix app name:
 
-    * In a Phoenix app `my_app` → generates `MyAppWeb.Components.*`
-    * In a non-Phoenix app `my_lib` → generates `MyLib.Components.*`
-    * Falls back to `OopsieDaisy.Components` if detection fails
+    * Phoenix app `my_app` → `MyAppWeb.Components.*`
+    * Non-Phoenix app → `MyApp.Components.*`
+    * Falls back to `OopsieDaisy.Components`
 
   ## Examples
 
-      # Generate all components (auto-detects module name)
-      OopsieDaisy.generate()
+      # Generate all components
+      {:ok, results} = OopsieDaisy.generate()
 
       # Generate specific components
-      OopsieDaisy.generate(components: ["button", "badge"])
+      {:ok, results} = OopsieDaisy.generate(components: ["button", "badge"])
 
-      # Custom module namespace (overrides auto-detection)
-      OopsieDaisy.generate(base_module: "MyApp.Components")
+      # Custom module namespace
+      {:ok, results} = OopsieDaisy.generate(base_module: "MyApp.UI")
+
+      # Custom output directory
+      {:ok, results} = OopsieDaisy.generate(output_dir: "lib/my_app_web/components")
 
   ## Returns
 
-  Returns `{:ok, results}` where results is a list of `{:ok, file_path}` or
-  `{:error, reason}` tuples for each component.
+  `{:ok, results}` where `results` is a list of `{:ok, file_path}` or `{:error, reason}` tuples.
   """
   def generate(opts \\ []) do
     with {:ok, _path} <- ensure_daisyui(opts),
@@ -190,21 +184,28 @@ defmodule OopsieDaisy do
   end
 
   @doc """
-  Auto-detects the base module name from the Mix project configuration.
+  Detects the base module namespace from your app's name.
 
-  If running in a Phoenix app, tries to use `AppWeb.Components` or `App.Components`.
-  Falls back to `OopsieDaisy.Components` if detection fails.
+  Used automatically by `generate/1` when `:base_module` is not provided.
+
+  ## How It Works
+
+  1. Gets app name from `Mix.Project.config()`
+  2. Converts to PascalCase (e.g., `my_app` → `MyApp`)
+  3. Checks if `MyAppWeb` module exists (indicates Phoenix app)
+  4. Returns appropriate namespace
 
   ## Examples
 
-      # In a Phoenix app called "my_app"
+      # In Phoenix app "my_app"
       OopsieDaisy.detect_base_module()
-      # => "MyAppWeb.Components"
+      #=> "MyAppWeb.Components"
 
-      # In a non-Phoenix Elixir app called "my_lib"
+      # In non-Phoenix app "my_lib"
       OopsieDaisy.detect_base_module()
-      # => "MyLib.Components"
+      #=> "MyLib.Components"
 
+  Returns `"OopsieDaisy.Components"` if detection fails.
   """
   def detect_base_module do
     try do

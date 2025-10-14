@@ -2,49 +2,60 @@ defmodule Mix.Tasks.OopsieDaisy.Gen do
   @moduledoc """
   Generates Phoenix.Component modules from DaisyUI documentation.
 
-  This task will automatically ensure the DaisyUI repository is available by cloning it
-  if necessary. If the repository already exists at tmp/daisyui, it will be used as-is.
-
-  ## Usage
+  ## Quick Start
 
       $ mix oopsie_daisy.gen
-      $ mix oopsie_daisy.gen --components button,badge
+
+  This generates all DaisyUI components as Phoenix.Component modules in your app,
+  automatically using your app's module namespace.
+
+  ## Common Usage
+
+      # Generate all components
+      $ mix oopsie_daisy.gen
+
+      # Generate specific components only
+      $ mix oopsie_daisy.gen --components button,badge,card
+
+      # Preview what would be generated
       $ mix oopsie_daisy.gen --dry-run
-      $ mix oopsie_daisy.gen --output-dir lib/my_components
+
+      # Custom output directory
+      $ mix oopsie_daisy.gen --output-dir lib/my_app_web/components
 
   ## Options
 
-    * `--components` - Only generate specific components (comma-separated)
-    * `--output-dir` - Output directory (default: lib/oopsie_daisy_components)
-    * `--base-module` - Base module namespace (default: auto-detected from app name)
-    * `--dry-run` - Print what would be generated without writing files
-    * `--skip-examples` - Skip generating example functions
-    * `--skip-clone` - Skip cloning DaisyUI (assumes repository already exists)
+    * `--components` - Comma-separated list of components to generate (default: all)
+    * `--output-dir` - Where to write files (default: `lib/oopsie_daisy_components`)
+    * `--base-module` - Module namespace (default: auto-detected from app name)
+    * `--dry-run` - Show what would be generated without writing files
+    * `--skip-clone` - Don't clone DaisyUI (use existing clone in `tmp/daisyui`)
 
   ## Auto-Detection
 
-  The task will automatically detect your Phoenix app name and use it for the base module:
+  Your app name is automatically detected and used for module namespaces:
 
-    * In a Phoenix app `my_app` → generates `MyAppWeb.Components.*`
-    * In a non-Phoenix app `my_lib` → generates `MyLib.Components.*`
-    * Can be overridden with `--base-module` flag
+    * Phoenix app `my_app` → `MyAppWeb.Components.Button`
+    * Other app `my_lib` → `MyLib.Components.Button`
 
-  ## Examples
+  Override with `--base-module` if needed.
 
-      # Generate all components (clones DaisyUI if needed)
+  ## First Run
+
+  The first time you run this, it will:
+  1. Clone the DaisyUI repository to `tmp/daisyui`
+  2. Parse component documentation
+  3. Generate Phoenix.Component modules
+
+  Subsequent runs use the existing clone. To update DaisyUI:
+
+      $ rm -rf tmp/daisyui
       $ mix oopsie_daisy.gen
 
-      # Generate only button and badge components
-      $ mix oopsie_daisy.gen --components button,badge
+  ## Requirements
 
-      # Preview without writing files
-      $ mix oopsie_daisy.gen --dry-run
-
-      # Generate to custom directory with custom module namespace
-      $ mix oopsie_daisy.gen --output-dir lib/ui/components --base-module MyApp.Components
-
-      # Skip cloning step (use existing repository)
-      $ mix oopsie_daisy.gen --skip-clone
+  - Git must be available (for cloning DaisyUI)
+  - Your Phoenix app should have Tailwind CSS and DaisyUI configured
   """
 
   use Mix.Task
@@ -154,10 +165,8 @@ defmodule Mix.Tasks.OopsieDaisy.Gen do
     end
   end
 
-  @doc """
-  Ensures the DaisyUI repository is available, cloning it if necessary.
-  """
-  def ensure_daisyui_available do
+  # Ensures DaisyUI repo is available, cloning if needed
+  defp ensure_daisyui_available do
     case Cloner.ensure_available(output_callback: &Mix.shell().info/1) do
       {:ok, _path} ->
         :ok
@@ -168,10 +177,8 @@ defmodule Mix.Tasks.OopsieDaisy.Gen do
     end
   end
 
-  @doc """
-  Loads extracted data by parsing DaisyUI documentation files.
-  """
-  def load_extracted_data do
+  # Loads and parses DaisyUI documentation files
+  defp load_extracted_data do
     original_dir = File.cwd!()
 
     components_dir =
@@ -231,10 +238,8 @@ defmodule Mix.Tasks.OopsieDaisy.Gen do
     end
   end
 
-  @doc """
-  Generates a single component file.
-  """
-  def generate_component(spec, output_dir, dry_run \\ false) do
+  # Generates a single component file
+  defp generate_component(spec, output_dir, dry_run \\ false) do
     code = Template.render_module(spec)
     file_path = Path.join(output_dir, "#{spec.file_name}.ex")
 
@@ -288,13 +293,10 @@ defmodule Mix.Tasks.OopsieDaisy.Gen do
     end)
   end
 
-  @doc """
-  Auto-detects the base module name from the Mix project configuration.
-
-  If running in a Phoenix app, tries to use `AppWeb.Components` or `App.Components`.
-  Falls back to `OopsieDaisy.Components` if detection fails.
-  """
-  def detect_base_module do
+  # Detects base module namespace from app name
+  # Phoenix app `my_app` → "MyAppWeb.Components"
+  # Other app → "MyApp.Components"
+  defp detect_base_module do
     try do
       config = Mix.Project.config()
       app_name = config[:app]

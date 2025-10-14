@@ -1,6 +1,8 @@
 defmodule OopsieDaisy.Generator.ComponentBuilder do
   @moduledoc """
-  Builds Phoenix.Component code from ComponentSpec.
+  Builds Phoenix.Component function code from specifications.
+
+  Internal module. Generates attrs, component functions, and class helper functions.
   """
 
   alias OopsieDaisy.Generator.Analyzer.ComponentSpec

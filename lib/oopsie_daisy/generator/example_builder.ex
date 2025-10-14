@@ -1,6 +1,8 @@
 defmodule OopsieDaisy.Generator.ExampleBuilder do
   @moduledoc """
-  Converts TitleGroups and Elements to example functions with HEEx templates.
+  Converts parsed HTML examples to HEEx template code.
+
+  Internal module. Handles element-to-HEEx conversion and example function generation.
   """
 
   alias OopsieDaisy.Parser.{Element, TitleGroup}

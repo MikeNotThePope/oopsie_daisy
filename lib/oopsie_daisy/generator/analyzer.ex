@@ -1,15 +1,16 @@
 defmodule OopsieDaisy.Generator.Analyzer do
   @moduledoc """
-  Analyzes PathGroup data to extract component metadata for code generation.
+  Analyzes DaisyUI examples to extract component metadata.
+
+  Internal module. Detects base classes, variants (colors, sizes, styles),
+  and builds specifications for code generation.
   """
 
   alias OopsieDaisy.Parser.{PathGroup, TitleGroup}
   alias OopsieDaisy.Generator.Helpers
 
   defmodule ComponentSpec do
-    @moduledoc """
-    Specification for a component to be generated.
-    """
+    @moduledoc false
     defstruct [
       :name,
       :module_name,

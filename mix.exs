@@ -41,8 +41,8 @@ defmodule OopsieDaisy.MixProject do
 
   defp description do
     """
-    Automatically generates Phoenix.Component modules from DaisyUI documentation.
-    Analyzes HTML examples, detects variants, and creates type-safe LiveView components.
+    Generates type-safe Phoenix.Component modules from DaisyUI documentation.
+    Parses DaisyUI docs, detects variants, and creates production-ready components.
     """
   end
 

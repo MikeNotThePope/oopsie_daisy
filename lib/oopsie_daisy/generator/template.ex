@@ -1,6 +1,8 @@
 defmodule OopsieDaisy.Generator.Template do
   @moduledoc """
-  Templates for generating complete Phoenix.Component modules.
+  Renders Phoenix.Component module code from specifications.
+
+  Internal module. Takes a ComponentSpec and generates the complete Elixir module code.
   """
 
   alias OopsieDaisy.Generator.ComponentBuilder

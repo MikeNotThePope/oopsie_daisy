@@ -1,15 +1,13 @@
 defmodule OopsieDaisy.Parser do
   @moduledoc """
-  Parses HTML examples from DaisyUI component documentation markdown files.
+  Parses HTML examples from DaisyUI markdown documentation.
 
-  This module contains the data structures and parsing logic for extracting
-  HTML examples from DaisyUI markdown files.
+  Internal module. Extracts HTML code blocks from markdown files and converts
+  them to structured data for the generator.
   """
 
   defmodule PathGroup do
-    @moduledoc """
-    Represents all examples from a single markdown file path.
-    """
+    @moduledoc false
     defstruct [:path, :title_groups]
 
     @type t :: %__MODULE__{
@@ -19,9 +17,7 @@ defmodule OopsieDaisy.Parser do
   end
 
   defmodule TitleGroup do
-    @moduledoc """
-    Represents all HTML examples under a single title within a markdown file.
-    """
+    @moduledoc false
     defstruct [:title, :elements]
 
     @type t :: %__MODULE__{
@@ -31,9 +27,7 @@ defmodule OopsieDaisy.Parser do
   end
 
   defmodule Element do
-    @moduledoc """
-    Represents a parsed HTML element.
-    """
+    @moduledoc false
     defstruct [:tag, :attrs, :text, :children]
 
     @type t :: %__MODULE__{
@@ -45,7 +39,7 @@ defmodule OopsieDaisy.Parser do
   end
 
   @doc """
-  Parses file lines and extracts examples.
+  Parses markdown lines and extracts HTML examples.
   """
   def parse_file_lines(lines, file_path) do
     parse_lines(lines, %{
