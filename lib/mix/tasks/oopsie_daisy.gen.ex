@@ -16,10 +16,18 @@ defmodule Mix.Tasks.OopsieDaisy.Gen do
 
     * `--components` - Only generate specific components (comma-separated)
     * `--output-dir` - Output directory (default: lib/oopsie_daisy_components)
-    * `--base-module` - Base module namespace (default: OopsieDaisy.Components)
+    * `--base-module` - Base module namespace (default: auto-detected from app name)
     * `--dry-run` - Print what would be generated without writing files
     * `--skip-examples` - Skip generating example functions
     * `--skip-clone` - Skip cloning DaisyUI (assumes repository already exists)
+
+  ## Auto-Detection
+
+  The task will automatically detect your Phoenix app name and use it for the base module:
+
+    * In a Phoenix app `my_app` → generates `MyAppWeb.Components.*`
+    * In a non-Phoenix app `my_lib` → generates `MyLib.Components.*`
+    * Can be overridden with `--base-module` flag
 
   ## Examples
 
@@ -83,7 +91,7 @@ defmodule Mix.Tasks.OopsieDaisy.Gen do
       )
 
     output_dir = opts[:output_dir] || "lib/oopsie_daisy_components"
-    base_module = opts[:base_module] || "OopsieDaisy.Components"
+    base_module = opts[:base_module] || detect_base_module()
     dry_run = opts[:dry_run] || false
     skip_clone = opts[:skip_clone] || false
     component_filter = parse_component_filter(opts[:components])
@@ -278,5 +286,46 @@ defmodule Mix.Tasks.OopsieDaisy.Gen do
 
       component_name in component_names
     end)
+  end
+
+  @doc """
+  Auto-detects the base module name from the Mix project configuration.
+
+  If running in a Phoenix app, tries to use `AppWeb.Components` or `App.Components`.
+  Falls back to `OopsieDaisy.Components` if detection fails.
+  """
+  def detect_base_module do
+    try do
+      config = Mix.Project.config()
+      app_name = config[:app]
+
+      if app_name do
+        # Convert app name to PascalCase module name
+        base_module_name =
+          app_name
+          |> to_string()
+          |> String.split("_")
+          |> Enum.map(&String.capitalize/1)
+          |> Enum.join()
+
+        # Try AppWeb.Components first (Phoenix 1.7+ convention)
+        web_module = Module.concat([base_module_name <> "Web", "Components"])
+        app_module = Module.concat([base_module_name, "Components"])
+
+        cond do
+          # Check if AppWeb module exists (indicates Phoenix app)
+          Code.ensure_loaded?(Module.concat([base_module_name <> "Web"])) ->
+            "#{base_module_name}Web.Components"
+
+          # Fall back to App.Components
+          true ->
+            "#{base_module_name}.Components"
+        end
+      else
+        "OopsieDaisy.Components"
+      end
+    rescue
+      _ -> "OopsieDaisy.Components"
+    end
   end
 end

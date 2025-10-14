@@ -37,9 +37,14 @@ mix deps.get
 
 ### Mix Task (Recommended)
 
+The generator **automatically detects your app name** and uses the appropriate module namespace:
+
 ```bash
-# Generate all components
+# Generate all components (auto-detects module name from your Phoenix app)
 mix oopsie_daisy.gen
+
+# In a Phoenix app called "my_app", this generates:
+# MyAppWeb.Components.Button, MyAppWeb.Components.Badge, etc.
 
 # Generate specific components
 mix oopsie_daisy.gen --components button,badge
@@ -47,7 +52,7 @@ mix oopsie_daisy.gen --components button,badge
 # Custom output directory
 mix oopsie_daisy.gen --output-dir lib/my_app_web/components
 
-# Custom module namespace
+# Override auto-detected module namespace
 mix oopsie_daisy.gen --base-module MyApp.Components
 
 # Preview without writing files
@@ -60,13 +65,17 @@ mix oopsie_daisy.gen --skip-clone
 ### Programmatic API
 
 ```elixir
-# Generate all components
+# Generate all components (auto-detects module name)
 {:ok, results} = OopsieDaisy.generate()
 
 # Generate specific components with custom options
 {:ok, results} = OopsieDaisy.generate(
   components: ["button", "badge"],
-  output_dir: "lib/my_app_web/components",
+  output_dir: "lib/my_app_web/components"
+)
+
+# Override auto-detected module name
+{:ok, results} = OopsieDaisy.generate(
   base_module: "MyApp.Components"
 )
 ```

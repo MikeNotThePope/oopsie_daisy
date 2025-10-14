@@ -45,7 +45,6 @@ defmodule OopsieDaisy.Generator.Template do
     |> String.trim_trailing()
   end
 
-
   @doc """
   Formats generated code using mix format.
   """
