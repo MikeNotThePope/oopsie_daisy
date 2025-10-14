@@ -9,6 +9,7 @@ defmodule DaisyuiGen.MixProject do
       app: :daisyui_gen,
       version: @version,
       elixir: "~> 1.18",
+      elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       description: description(),
@@ -18,6 +19,10 @@ defmodule DaisyuiGen.MixProject do
       source_url: @source_url
     ]
   end
+
+  # Specifies which paths to compile per environment.
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib/daisyui_gen", "lib/mix"]
 
   # Run "mix help compile.app" to learn about applications.
   def application do

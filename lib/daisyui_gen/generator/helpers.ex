@@ -70,13 +70,17 @@ defmodule DaisyuiGen.Generator.Helpers do
       "wide"
   """
   def title_to_function_name(title) do
+    # Map common Unicode symbols to ASCII names
+    title = replace_unicode_symbols(title)
+
     # Remove component name prefix if present
     name =
       title
       |> String.downcase()
       |> String.replace(~r/^(button|badge|card|alert)\s+/i, "")
       |> String.replace(~r/\s+(button|badge|card|alert)$/i, "")
-      |> String.replace(~r/[^\w\s]/, "")
+      # Only keep ASCII word characters, spaces, and underscores
+      |> String.replace(~r/[^a-z0-9\s_]/, "")
       |> String.replace(~r/\s+/, "_")
       |> String.trim("_")
 
@@ -91,6 +95,21 @@ defmodule DaisyuiGen.Generator.Helpers do
       name ->
         name
     end
+  end
+
+  # Replaces common Unicode symbols with ASCII-safe names.
+  defp replace_unicode_symbols(text) do
+    text
+    |> String.replace("⌘", "cmd")
+    |> String.replace("⌥", "opt")
+    |> String.replace("⇧", "shift")
+    |> String.replace("⌃", "ctrl")
+    |> String.replace("▲", "up")
+    |> String.replace("▼", "down")
+    |> String.replace("◀︎", "left")
+    |> String.replace("◀", "left")
+    |> String.replace("▶︎", "right")
+    |> String.replace("▶", "right")
   end
 
   @doc """
