@@ -239,7 +239,7 @@ defmodule Mix.Tasks.OopsieDaisy.Gen do
   end
 
   # Generates a single component file
-  defp generate_component(spec, output_dir, dry_run \\ false) do
+  defp generate_component(spec, output_dir, dry_run) do
     code = Template.render_module(spec)
     file_path = Path.join(output_dir, "#{spec.file_name}.ex")
 
@@ -309,10 +309,6 @@ defmodule Mix.Tasks.OopsieDaisy.Gen do
           |> String.split("_")
           |> Enum.map(&String.capitalize/1)
           |> Enum.join()
-
-        # Try AppWeb.Components first (Phoenix 1.7+ convention)
-        web_module = Module.concat([base_module_name <> "Web", "Components"])
-        app_module = Module.concat([base_module_name, "Components"])
 
         cond do
           # Check if AppWeb module exists (indicates Phoenix app)
