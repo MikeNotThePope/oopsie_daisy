@@ -3,7 +3,7 @@ defmodule DaisyuiGen.Generator.Template do
   Templates for generating complete Phoenix.Component modules.
   """
 
-  alias DaisyuiGen.Generator.{ComponentBuilder, ExampleBuilder}
+  alias DaisyuiGen.Generator.ComponentBuilder
   alias DaisyuiGen.Generator.Analyzer.ComponentSpec
 
   @doc """
@@ -25,7 +25,6 @@ defmodule DaisyuiGen.Generator.Template do
       use Phoenix.Component
 
     #{build_component_section(spec)}
-    #{build_examples_section(spec)}
     end
     """
     |> format_code()
@@ -46,20 +45,6 @@ defmodule DaisyuiGen.Generator.Template do
     |> String.trim_trailing()
   end
 
-  defp build_examples_section(spec) do
-    examples = ExampleBuilder.build_all_examples(spec.title_groups)
-
-    if String.trim(examples) == "" do
-      ""
-    else
-      """
-
-        # Examples
-
-      #{indent(examples, 2)}
-      """
-    end
-  end
 
   @doc """
   Formats generated code using mix format.

@@ -8,7 +8,11 @@ defmodule DaisyuiGen.Generator.ExampleBuilderTest do
     test "returns true for multiple elements with same tag" do
       elements = [
         %Element{tag: "button", attrs: %{"class" => "btn btn-primary"}, children: ["Primary"]},
-        %Element{tag: "button", attrs: %{"class" => "btn btn-secondary"}, children: ["Secondary"]},
+        %Element{
+          tag: "button",
+          attrs: %{"class" => "btn btn-secondary"},
+          children: ["Secondary"]
+        },
         %Element{tag: "button", attrs: %{"class" => "btn btn-accent"}, children: ["Accent"]}
       ]
 
