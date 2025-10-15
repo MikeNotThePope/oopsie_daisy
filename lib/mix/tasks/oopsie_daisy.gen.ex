@@ -26,19 +26,24 @@ defmodule Mix.Tasks.OopsieDaisy.Gen do
   ## Options
 
     * `--components` - Comma-separated list of components to generate (default: all)
-    * `--output-dir` - Where to write files (default: `lib/oopsie_daisy_components`)
+    * `--output-dir` - Where to write files (default: auto-detected from app name)
     * `--base-module` - Module namespace (default: auto-detected from app name)
     * `--dry-run` - Show what would be generated without writing files
     * `--skip-clone` - Don't clone DaisyUI (use existing clone in `tmp/daisyui`)
 
   ## Auto-Detection
 
-  Your app name is automatically detected and used for module namespaces:
+  Your app name is automatically detected and used for module namespaces and file paths:
 
-    * Phoenix app `my_app` → `MyAppWeb.Components.Button`
-    * Other app `my_lib` → `MyLib.Components.Button`
+    * Phoenix app `my_app`:
+      - Module: `MyAppWeb.Components.Button`
+      - File: `lib/my_app_web/components/button.ex`
 
-  Override with `--base-module` if needed.
+    * Other app `my_lib`:
+      - Module: `MyLib.Components.Button`
+      - File: `lib/my_lib/components/button.ex`
+
+  Override with `--base-module` and `--output-dir` if needed.
 
   ## First Run
 
@@ -101,8 +106,8 @@ defmodule Mix.Tasks.OopsieDaisy.Gen do
         ]
       )
 
-    output_dir = opts[:output_dir] || "lib/oopsie_daisy_components"
     base_module = opts[:base_module] || detect_base_module()
+    output_dir = opts[:output_dir] || detect_output_dir(base_module)
     dry_run = opts[:dry_run] || false
     skip_clone = opts[:skip_clone] || false
     component_filter = parse_component_filter(opts[:components])
@@ -325,5 +330,24 @@ defmodule Mix.Tasks.OopsieDaisy.Gen do
     rescue
       _ -> "OopsieDaisy.Components"
     end
+  end
+
+  # Detects output directory from base module namespace
+  # "MyAppWeb.Components" → "lib/my_app_web/components"
+  # "MyApp.Components" → "lib/my_app/components"
+  defp detect_output_dir(base_module) do
+    # Remove ".Components" suffix and convert to path
+    base_module
+    |> String.replace(~r/\.Components$/, "")
+    |> module_to_path()
+    |> then(&Path.join(["lib", &1, "components"]))
+  end
+
+  # Converts module name to file path
+  # "MyAppWeb" → "my_app_web"
+  # "MyApp" → "my_app"
+  defp module_to_path(module_name) do
+    module_name
+    |> Macro.underscore()
   end
 end
