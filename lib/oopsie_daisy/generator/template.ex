@@ -12,6 +12,9 @@ defmodule OopsieDaisy.Generator.Template do
   Generates complete module code from ComponentSpec.
   """
   def render_module(%ComponentSpec{} = spec) do
+    component_name = Macro.underscore(spec.name)
+    example = build_example(spec, component_name)
+
     """
     defmodule #{spec.module_name} do
       @moduledoc \"\"\"
@@ -21,7 +24,7 @@ defmodule OopsieDaisy.Generator.Template do
 
       ## Examples
 
-          <.#{Macro.underscore(spec.name)}>Content</.#{Macro.underscore(spec.name)}>
+          #{example}
       \"\"\"
 
       use Phoenix.Component
@@ -45,6 +48,29 @@ defmodule OopsieDaisy.Generator.Template do
     #{if class_helpers != "", do: indent(class_helpers, 2), else: ""}
     """
     |> String.trim_trailing()
+  end
+
+  defp build_example(%ComponentSpec{base_class: base_class}, component_name) do
+    html_tag = infer_html_tag(base_class)
+
+    if ComponentBuilder.is_void_element?(html_tag) do
+      case base_class do
+        "input" -> ~s(<.#{component_name} type="text" placeholder="Type here" />)
+        _ -> ~s(<.#{component_name} />)
+      end
+    else
+      ~s(<.#{component_name}>Content</.#{component_name}>)
+    end
+  end
+
+  defp infer_html_tag(base_class) do
+    case base_class do
+      "btn" -> "button"
+      "input" -> "input"
+      "textarea" -> "textarea"
+      "select" -> "select"
+      _ -> "div"
+    end
   end
 
   @doc """

@@ -8,10 +8,19 @@ defmodule OopsieDaisy.Generator.ComponentBuilder do
   alias OopsieDaisy.Generator.Analyzer.ComponentSpec
   alias OopsieDaisy.Generator.{Analyzer, Helpers}
 
+  # HTML void elements that cannot have children and must be self-closing
+  @void_elements ~w(area base br col embed hr img input link meta param source track wbr)
+
+  @doc """
+  Checks if an HTML tag is a void element.
+  """
+  def is_void_element?(tag) when is_binary(tag), do: tag in @void_elements
+  def is_void_element?(_), do: false
+
   @doc """
   Generates component attributes based on variants.
   """
-  def build_attrs(%ComponentSpec{variants: variants}) do
+  def build_attrs(%ComponentSpec{variants: variants, base_class: base_class}) do
     attrs = []
 
     # Add variant attrs if present
@@ -88,12 +97,22 @@ defmodule OopsieDaisy.Generator.ComponentBuilder do
         attrs
       end
 
+    # Build global attrs based on base class
+    global_attrs =
+      case base_class do
+        "input" -> "~w(disabled form name value type placeholder)"
+        "textarea" -> "~w(disabled form name placeholder rows cols)"
+        "select" -> "~w(disabled form name)"
+        "btn" -> "~w(disabled form type)"
+        _ -> "~w()"
+      end
+
     # Always add class and rest attrs
     attrs =
       attrs ++
         [
           build_simple_attr(:class, :string, "", "Additional CSS classes"),
-          "  attr :rest, :global, include: ~w(disabled form name value type)"
+          "  attr :rest, :global, include: #{global_attrs}"
         ]
 
     # Reverse to get correct order (variant, size, style, modifier, class, rest)
@@ -129,6 +148,8 @@ defmodule OopsieDaisy.Generator.ComponentBuilder do
   def build_component_function(%ComponentSpec{name: name, base_class: base_class} = spec) do
     fn_name = Helpers.to_file_name(name)
     has_variants = Analyzer.has_variants?(spec)
+    html_tag = infer_html_tag(base_class)
+    is_void = is_void_element?(html_tag)
 
     class_expr =
       if has_variants do
@@ -141,17 +162,32 @@ defmodule OopsieDaisy.Generator.ComponentBuilder do
         end
       end
 
+    inner_block_slot =
+      if is_void do
+        ""
+      else
+        "slot :inner_block, required: true\n\n  "
+      end
+
+    template_body =
+      if is_void do
+        "<#{html_tag} class={#{class_expr}} {@rest} />"
+      else
+        """
+        <#{html_tag} class={#{class_expr}} {@rest}>
+          <%= render_slot(@inner_block) %>
+        </#{html_tag}>
+        """
+        |> String.trim()
+      end
+
     """
       @doc \"\"\"
       Renders a #{name} component.
       \"\"\"
-      slot :inner_block, required: true
-
-      def #{fn_name}(assigns) do
+      #{inner_block_slot}def #{fn_name}(assigns) do
         ~H\"\"\"
-        <#{infer_html_tag(base_class)} class={#{class_expr}} {@rest}>
-          <%= render_slot(@inner_block) %>
-        </#{infer_html_tag(base_class)}>
+        #{template_body}
         \"\"\"
       end
     """
